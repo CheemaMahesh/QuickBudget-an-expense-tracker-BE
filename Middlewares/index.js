@@ -1,7 +1,6 @@
 const { z } = require("zod");
-const jwt = require("require");
-// TODO ceate an auth middlware
-// TODO create validate all required details
+const jwt = require("jsonwebtoken");
+// require("dotenv").config();
 
 const isFormatValidSignUp = async (req, res, next) => {
 try{
@@ -39,7 +38,6 @@ const isFormatValidForSignIn = async (req, res, next) => {
         });
         return;
     }
-    console.log("done");
     next();
    } catch(err) {
     console.log("something went wrong in isFormatValidSignin middlware!", err);
@@ -47,16 +45,21 @@ const isFormatValidForSignIn = async (req, res, next) => {
 }
 
 const auth = (req, res, next) => {
-    const token = req.headers.token;
-    const exiUser = jwt.verify(token, process.env.JWT_SECRET);
-    if(!exiUser){
-        res.status(404).json({
-            message: "Unotherized Request",
-            success: false,
-        });
-        return;
+    try{
+        const token = req.headers.token;
+        const exiUser = jwt.verify(token, process.env.JWT_SECRET);
+        if(!exiUser){
+            res.status(404).json({
+                message: "Unotherized Request",
+                success: false,
+            });
+            return;
+        }
+        req.body.userId = exiUser.id;
+        next();
+    } catch(err){
+        console.log("error in auth", err);
     }
-    next();
 }
 
 module.exports = {

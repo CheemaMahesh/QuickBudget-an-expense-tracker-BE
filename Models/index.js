@@ -9,11 +9,7 @@ const user = new mongoose.Schema({
     createdAt: String,
     expense: [
         {
-            expenseId: mongoose.Schema.Types.ObjectId,
-            createdAt: String,
-            updatedAt: String,
-            _destroy: Boolean,
-            deletedAt: String,
+            expenseId: { type: mongoose.Schema.Types.ObjectId, ref: "Expese" },
         }
     ],
 });
@@ -22,9 +18,7 @@ const expense = new mongoose.Schema({
     value: { type: Number, require: true },
     createdAt: String,
     UpdatedAt: String,
-    _destroy: Boolean,
-    deletedAt: String,
-    userId: mongoose.Schema.Types.ObjectId,
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
 });
 
 const UserModel = mongoose.model('User', user);
