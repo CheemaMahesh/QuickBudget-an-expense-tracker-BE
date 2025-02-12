@@ -1,6 +1,4 @@
 const mongoose = require("mongoose");
-const { string } = require("zod");
-
 
 const user = new mongoose.Schema({
     name: { type: String, require: true },
@@ -19,6 +17,8 @@ const expense = new mongoose.Schema({
     createdAt: String,
     UpdatedAt: String,
     userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    type: { type: String, require: true }, //CREDIT or DEBIT
+    description: String,
 });
 
 const UserModel = mongoose.model('User', user);

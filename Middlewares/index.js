@@ -1,6 +1,5 @@
 const { z } = require("zod");
 const jwt = require("jsonwebtoken");
-// require("dotenv").config();
 
 const isFormatValidSignUp = async (req, res, next) => {
 try{
