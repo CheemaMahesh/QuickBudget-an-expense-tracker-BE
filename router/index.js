@@ -1,6 +1,6 @@
 const express = require("express");
 const { isFormatValidSignUp, isFormatValidForSignIn, auth } = require("../Middlewares");
-const { signupUser, signinUser, createAnExpense, getAllExpenses, updateAnExpense, deleteAnExpese, filterbyDate } = require("../Controllers");
+const { signupUser, signinUser, createAnExpense, getAllExpenses, updateAnExpense, deleteAnExpese } = require("../Controllers");
 
 const router = express.Router();
 

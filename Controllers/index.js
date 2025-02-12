@@ -52,9 +52,12 @@ const signinUser = async (req, res) => {
 // 3. Create an Expense
 const createAnExpense = async (req, res) => {
         try{
-        const userId = req.body.userId;
-        const requiredValue = z.number().gte(0);
-        const successRequiredDetails = requiredValue.safeParse(req.body.value);
+        const { userId, value, type, description } = req.body;
+        const requiredValue = z.object({
+                value: z.number().gte(0),
+                type: z.string(),
+        });
+        const successRequiredDetails = requiredValue.safeParse({ value, type });
         if (!successRequiredDetails.success) {
             res.status(400).json({
                 message: "Value is In-Valid",
@@ -63,12 +66,12 @@ const createAnExpense = async (req, res) => {
             return;
         }
        const result =  await ExpenseModel.create({
-            value: req.body.value,
+            value: value,
             createdAt: new Date().toISOString(),
             userId: userId,
-            _destroy: false,
+            type: type,
+            description: description,
         });
-        console.log("result", result);
         if (!result._id) {
             res.status(500).json({
                 message: "Unable to Add Expense",
@@ -91,6 +94,8 @@ const createAnExpense = async (req, res) => {
         try{
             const { userId } = req.body;
         const allExpeses = await ExpenseModel.find({ userId: userId })
+        const creditValue = allExpeses?.filter((item) => item?.type === "CREDIT")?.reduce((a, b) => a + b.value, 0);
+        const debitValue = allExpeses?.filter((item) => item?.type === "DEBIT")?.reduce((a, b) => a + b.value, 0);
         res.status(200).json({
             message: "Here is Your Expenses",
             successs: true,
@@ -98,8 +103,12 @@ const createAnExpense = async (req, res) => {
                 value: item.value,
                 createdAt: item.createdAt,
                 id: item._id,
+                type: item.type,
+                description: item.description,
             })),
-            total: allExpeses?.reduce((a, b) => a + b.value, 0),
+            totalCredit: creditValue,
+            totalDebit: debitValue,
+            balance: creditValue - debitValue,
         })
         } catch(err) {
             console.log("error in get all expense controller", err);
@@ -109,7 +118,7 @@ const createAnExpense = async (req, res) => {
 // 4. Update an Expense
     const updateAnExpense = async (req, res) => {
         try{
-            const { value, id } = req.body;
+            const { value, id, type } = req.body;
         const successRequiredDetails = z.number().gte(0).safeParse(value);
         if(!successRequiredDetails.success) {
             res.status(400).json({
@@ -118,7 +127,11 @@ const createAnExpense = async (req, res) => {
             });
             return;
         }
-        await ExpenseModel.findByIdAndUpdate(id, {value: value, updatedAt: new Date().toISOString()});
+        if (!type) {
+            await ExpenseModel.findByIdAndUpdate(id, {value: value, updatedAt: new Date().toISOString()});
+        } else {
+            await ExpenseModel.findByIdAndUpdate(id, {value: value, updatedAt: new Date().toISOString(), type: type });
+        }
         res.status(200).json({
             message: "Your Expesnse has been updated!",
             success: true,
