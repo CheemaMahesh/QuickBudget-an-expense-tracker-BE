@@ -79,7 +79,7 @@ const createAnExpense = async (req, res) => {
             });
             return;
         }
-        const ressss = await UserModel.findByIdAndUpdate(userId, { $push: { expenses: result._id, _destroy: false, } });
+         await UserModel.findByIdAndUpdate(userId, { $push: { expenses: result._id, _destroy: false, } });
         res.status(200).json({
             message: "Your Exprense Has been Successfully Saved",
             success: true,
@@ -92,13 +92,14 @@ const createAnExpense = async (req, res) => {
 // 7. Get List of Expense
     const getAllExpenses = async (req, res) => {
         try{
-            const { userId } = req.body;
+        const { userId } = req.body;
+        const getUserData = await UserModel.findById(userId);
         const allExpeses = await ExpenseModel.find({ userId: userId })
         const creditValue = allExpeses?.filter((item) => item?.type === "CREDIT")?.reduce((a, b) => a + b.value, 0);
         const debitValue = allExpeses?.filter((item) => item?.type === "DEBIT")?.reduce((a, b) => a + b.value, 0);
         res.status(200).json({
             message: "Here is Your Expenses",
-            successs: true,
+            success: true,
             exprenses: allExpeses?.map((item) => ({
                 value: item.value,
                 createdAt: item.createdAt,
@@ -109,6 +110,7 @@ const createAnExpense = async (req, res) => {
             totalCredit: creditValue,
             totalDebit: debitValue,
             balance: creditValue - debitValue,
+            name: getUserData?.name,
         })
         } catch(err) {
             console.log("error in get all expense controller", err);
