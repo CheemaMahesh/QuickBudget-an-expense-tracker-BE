@@ -10,6 +10,6 @@ const connectToMongoose = async () => {
 const app = express();
 app.use(cors());
 app.use(express.json());
-app.use('/', require('./router'))
+app.use('/', require('./router'));
 
 app.listen(process.env.PORT, () => connectToMongoose().catch(err => console.log("mongooseErr", err)));
