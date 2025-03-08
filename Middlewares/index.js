@@ -46,6 +46,15 @@ const isFormatValidForSignIn = async (req, res, next) => {
 const auth = (req, res, next) => {
     try{
         const token = req.headers.token;
+
+        if(!token) {
+            res.status(404).json({
+                message: "Unotherized Request, Token is missing",
+                success: false,
+            });
+            return;
+        }
+
         const exiUser = jwt.verify(token, process.env.JWT_SECRET);
         if(!exiUser){
             res.status(404).json({
