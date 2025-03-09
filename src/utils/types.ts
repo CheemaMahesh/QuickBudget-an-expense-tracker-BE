@@ -20,8 +20,6 @@ export interface AuthRes extends Response {}
 export interface MiddlewareNext extends NextFunction {}
 
 
-
-
 // ---------Scema Types
 export interface UserSchemaType {
     _id: string;

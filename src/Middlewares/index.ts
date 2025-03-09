@@ -1,7 +1,7 @@
 import { SignupRequest, AuthRes, MiddlewareNext, SigninRequest } from "../utils/types";
 import { z } from "zod";
 import { invalidFormat, invalidSignUpDetails, invalidSignInDetails } from '../utils/constants';
-import { User } from "../models/schemas";
+import { User } from "../Models/schemas";
 
 export const validateSignupData = async (req: SignupRequest, res: AuthRes, next: MiddlewareNext) => {
     try {
