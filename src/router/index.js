@@ -23,8 +23,6 @@ const router = express.Router();
 // 6. Delete an Expese
     router.delete('/delete-expense', auth, deleteAnExpese);
 
-// 8. Get filter  -----------> TO be developed
-    // router.get('/get-by-type', auth, filterbyDate);
 
 
 
