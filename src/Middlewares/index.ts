@@ -2,6 +2,12 @@ import { SignupRequest, AuthRes, MiddlewareNext, SigninRequest } from "../utils/
 import { z } from "zod";
 import { invalidFormat, invalidSignUpDetails, invalidSignInDetails } from '../utils/constants';
 import { User } from "../Models/schemas";
+import { Request } from "express";
+import jwt, { JwtPayload } from "jsonwebtoken";
+
+interface TokenObject extends JwtPayload{
+    _id: string;
+}
 
 export const validateSignupData = async (req: SignupRequest, res: AuthRes, next: MiddlewareNext) => {
     try {
@@ -93,3 +99,50 @@ export const validateSinginData = async (req: SigninRequest, res: AuthRes, next:
         })
     }
 }
+
+export const IsValidUser = async(req: Request, res: AuthRes, next: MiddlewareNext) => {
+    try{
+
+        const { token } = req.headers;
+        if(!token){
+            res.status(401).json({
+                message: "Unauthorized User!",
+                success: false,
+            })
+        };
+
+        if (typeof token !== 'string') {
+            res.status(401).json({
+                message: "Invalid token format!",
+                success: false,
+            });
+            return;
+        }
+        const decodedToken = jwt.verify(token, String(process.env.JWT_SECRET));
+        if (typeof decodedToken === 'string') {
+            res.status(401).json({
+                message: "Invalid token format!",
+                success: false,
+            });
+            return;
+        }
+        const tokenObject: TokenObject = decodedToken as TokenObject;
+
+        if(!tokenObject?._id){
+            res.status(401).json({
+                message: "Unauthorized User!",
+                success: false,
+            })
+        }
+
+        req.body._id = tokenObject._id;
+        next();
+
+    }catch(err){
+        console.log("Somthing went wrong int IsValidUser Mware!", err);
+        res.status(500).json({
+            message:"Somthing went wrong, please try again!",
+            success: true,
+        })
+    }
+};
