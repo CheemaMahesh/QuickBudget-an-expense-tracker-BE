@@ -7,4 +7,14 @@ const useSchema = new Schema<UserSchemaType>({
     password: { type: String, required: true}
 });
 
+
+const expense = new Schema({
+    value: { type: Number, require: true },
+    createdAt: String,
+    UpdatedAt: String,
+    userId: { type: Schema.Types.ObjectId, ref: "User" },
+    type: { type: String, require: true }, //CREDIT or DEBIT
+    description: String,
+});
+
 export const User = model<UserSchemaType>("User", useSchema);
