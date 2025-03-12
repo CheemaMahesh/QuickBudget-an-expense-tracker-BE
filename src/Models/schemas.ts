@@ -1,5 +1,5 @@
 import { Schema, model } from "mongoose";
-import { UserSchemaType } from "../utils/types";
+import { UserSchemaType, ExpenseSchemaType } from "../utils/types";
 
 const useSchema = new Schema<UserSchemaType>({
     name: { type: String, required: true},
@@ -8,13 +8,14 @@ const useSchema = new Schema<UserSchemaType>({
 });
 
 
-const expense = new Schema({
-    value: { type: Number, require: true },
+const expense = new Schema<ExpenseSchemaType>({
+    value: { type: Number, required: true },
     createdAt: String,
-    UpdatedAt: String,
+    updatedAt: String,
     userId: { type: Schema.Types.ObjectId, ref: "User" },
-    type: { type: String, require: true }, //CREDIT or DEBIT
+    type: { type: String, required: true }, //CREDIT or DEBIT
     description: String,
 });
 
 export const User = model<UserSchemaType>("User", useSchema);
+export const Expense = model<ExpenseSchemaType>("Expense", expense);

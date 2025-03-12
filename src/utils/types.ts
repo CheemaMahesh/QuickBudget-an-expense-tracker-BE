@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express";
+import mongoose from "mongoose";
 
 export interface SignupRequest extends Request{
     body:{
@@ -26,4 +27,14 @@ export interface UserSchemaType {
     name: string;
     email: string;
     password: string;
+  }
+
+  export interface ExpenseSchemaType {
+    _id: string;
+    value: number;
+    createdAt: string; 
+    updatedAt: string;
+    userId: typeof mongoose.Types.ObjectId;
+    type: string;
+    description: string;
   }
