@@ -41,3 +41,28 @@ export const createAnExpense = async (req: Request, res: AuthRes) => {
         console.log("Error in CreateExpenseController", err);
     }   
 }
+
+export const updateAnExpense = async (req: Request, res: AuthRes) => {
+    try{
+        const { value, id, type } = req.body;
+    const successRequiredDetails = z.number().gte(0).safeParse(value);
+    if(!successRequiredDetails.success) {
+        res.status(400).json({
+            message: "Invalid Value Format",
+            success: false,
+        });
+        return;
+    }
+    if (!type) {
+        await Expense.findByIdAndUpdate(id, {value: value, updatedAt: new Date().toISOString()});
+    } else {
+        await Expense.findByIdAndUpdate(id, {value: value, updatedAt: new Date().toISOString(), type: type });
+    }
+    res.status(200).json({
+        message: "Your Expesnse has been updated!",
+        success: true,
+    })
+    } catch(err) {
+        console.log("Error in update and expense controller", err);
+    }
+};
